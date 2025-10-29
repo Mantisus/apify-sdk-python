@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import pytest
-
 from apify import Actor
 
 if TYPE_CHECKING:
@@ -121,7 +119,6 @@ async def test_actor_fails_correctly_with_exception(
     assert run_result.status == 'FAILED'
 
 
-@pytest.mark.skip(reason='Skipped due to known instability, see issue #650.')
 async def test_actor_with_crawler_reboot(make_actor: MakeActorFunction, run_actor: RunActorFunction) -> None:
     """Test that crawler in actor works as expected after reboot.
 
@@ -154,8 +151,8 @@ async def test_actor_with_crawler_reboot(make_actor: MakeActorFunction, run_acto
 
             await crawler.run(requests)
 
-            # Each time one request is finished.
-            assert crawler.statistics.state.requests_finished == 1
+            # Statistics are saved with persistence.
+            assert crawler.statistics.state.requests_finished == 2
 
     actor = await make_actor(label='migration', main_func=main)
     run_result = await run_actor(actor)
